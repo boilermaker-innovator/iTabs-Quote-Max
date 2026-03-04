@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iTabs · Quote Comparison Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --steel: #1c2e40;
+    --mid: #2a4158;
+    --border: #2e4a63;
+    --orange: #ff6b2b;
+    --orange-soft: rgba(255,107,43,0.12);
+    --gold: #f4b942;
+    --green: #2ecc71;
+    --green-soft: rgba(46,204,113,0.12);
+    --red: #e74c3c;
+    --red-soft: rgba(231,76,60,0.1);
+    --text: #e8edf2;
+    --text-muted: #7a9ab5;
+    --text-dim: #4a6a85;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--steel);
+    border-bottom: 2px solid var(--orange);
+    padding: 20px 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--orange);
+    line-height: 1;
+  }
+  .logo span { color: var(--text-muted); font-size: 14px; letter-spacing: 1px; }
+  .report-meta {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .report-meta strong { color: var(--text); display: block; font-size: 13px; margin-bottom: 2px; }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .md-download-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    flex-wrap: wrap;
+  }
+  .md-download-left { flex: 1; min-width: 200px; }
+  .md-download-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 3px;
+  }
+  .md-download-desc {
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+  .md-download-btn {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+  .md-download-btn:hover { opacity: 0.88; }
+
+  .inline-itab {
+    display: inline;
+    background: rgba(255,107,43,0.1);
+    border-bottom: 2px solid var(--orange);
+    border-radius: 3px;
+    padding: 1px 6px 1px 4px;
+    cursor: pointer;
+    color: #111;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .inline-itab:hover { background: rgba(255,107,43,0.22); }
+  .inline-i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    background: var(--orange);
+    color: #fff;
+    border-radius: 50%;
+    font-style: italic;
+    font-family: serif;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 4px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  /* ── COVER LETTER ── */
+  .cover-letter {
+    background: #f9f7f4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 36px 40px 28px;
+    margin-bottom: 36px;
+    color: #222;
+    font-family: 'DM Sans', sans-serif;
+    position: relative;
+  }
+  .letter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--orange);
+  }
+  .letter-from-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1.5px;
+    font-size: 20px;
+  }
+  .letter-from-role { font-size: 12px; color: #666; margin-top: 2px; }
+  .letter-from-contact { font-size: 11px; color: #888; margin-top: 3px; font-family: 'DM Mono', monospace; }
+  .letter-date { font-size: 12px; color: #666; font-family: 'DM Mono', monospace; }
+  .letter-to { font-size: 13px; color: #333; margin-bottom: 18px; line-height: 1.7; }
+  .letter-subject {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: #f0ece6;
+    border-left: 3px solid var(--orange);
+    border-radius: 2px;
+  }
+  .letter-body p {
+    font-size: 13.5px;
+    color: #333;
+    line-height: 1.75;
+    margin-bottom: 14px;
+  }
+  .letter-body strong { color: #111; }
+  .letter-sign {
+    margin-top: 22px;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.8;
+  }
+  .letter-sign span { color: #888; font-size: 12px; }
+  .letter-divider {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--orange);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    border-top: 1px dashed rgba(255,107,43,0.3);
+    padding-top: 14px;
+  }
+  @media (max-width: 600px) {
+    .cover-letter { padding: 24px 18px 20px; }
+    .letter-header { flex-direction: column; gap: 10px; }
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--orange);
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+
+  /* ── EXECUTIVE SUMMARY ── */
+  .exec-summary {
+    background: var(--steel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--orange);
+    border-radius: 6px;
+    padding: 20px 22px;
+    margin-bottom: 28px;
+  }
+  .exec-summary h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .exec-summary p {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    margin-bottom: 14px;
+  }
+  .recommendation-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-soft);
+    border: 1px solid var(--green);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 600;
+  }
+  .recommendation-badge::before {
+    content: '✓';
+    font-size: 16px;
+  }
+
+  /* ── QUOTE GRID ── */
+  .quote-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 600px) {
+    .quote-grid { grid-template-columns: 1fr; }
+  }
+
+  .quote-card {
+    background: var(--steel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .quote-card:hover { border-color: var(--orange); }
+  .quote-card.winner {
+    border-color: var(--green);
+    background: linear-gradient(135deg, var(--steel) 0%, rgba(46,204,113,0.06) 100%);
+  }
+  .winner-ribbon {
+    position: absolute;
+    top: -1px;
+    right: 14px;
+    background: var(--green);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 0 0 4px 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .contractor-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    padding-right: 60px;
+  }
+  .contractor-trade {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .price-amount.high { color: var(--red); }
+  .price-amount.low { color: var(--green); }
+  .price-vs {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+  .price-vs.saving { color: var(--green); }
+  .price-vs.premium { color: var(--red); }
+
+  /* ── METRICS ROW ── */
+  .metrics {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .metric {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--mid);
+    color: var(--text-muted);
+  }
+  .metric.good { background: var(--green-soft); color: var(--green); }
+  .metric.warn { background: rgba(244,185,66,0.12); color: var(--gold); }
+  .metric.bad { background: var(--red-soft); color: var(--red); }
+
+  /* ── ITAB BUTTON ── */
+  .itab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange);
+    color: var(--orange);
+    border-radius: 4px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    justify-content: center;
+    letter-spacing: 0.5px;
+  }
+  .itab-btn:hover {
+    background: var(--orange);
+    color: #fff;
+  }
+  .itab-btn .i-icon {
+    width: 18px;
+    height: 18px;
+    background: var(--orange);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    font-family: serif;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .itab-btn:hover .i-icon { background: #fff; color: var(--orange); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-section {
+    background: var(--steel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin-bottom: 28px;
+  }
+  .compare-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .compare-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--mid);
+    color: var(--text-muted);
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid rgba(46,74,98,0.4);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: rgba(255,107,43,0.04); }
+  .tick { color: var(--green); font-size: 15px; }
+  .cross { color: var(--red); font-size: 15px; }
+  .partial { color: var(--gold); font-size: 13px; }
+
+  /* ── RISK SECTION ── */
+  .risk-card {
+    background: var(--red-soft);
+    border: 1px solid rgba(231,76,60,0.3);
+    border-left: 4px solid var(--red);
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .risk-card h3 { font-size: 13px; color: var(--red); margin-bottom: 6px; font-weight: 600; }
+  .risk-card p { font-size: 12.5px; color: var(--text-muted); }
+
+  /* ── POPUP OVERLAY ── */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,27,42,0.88);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    backdrop-filter: blur(4px);
+  }
+  .popup-overlay.active { display: flex; }
+
+  .popup-panel {
+    background: var(--steel);
+    border: 1px solid var(--orange);
+    border-top: 3px solid var(--orange);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 88vh;
+    overflow-y: auto;
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .popup-header {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: var(--steel);
+    z-index: 10;
+  }
+  .popup-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+    color: var(--orange);
+    line-height: 1.2;
+  }
+  .popup-header p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .close-btn {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .close-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+  .popup-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--navy);
+    overflow-x: auto;
+  }
+  .popup-tab {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .popup-tab.active {
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+  .popup-tab:hover:not(.active) { color: var(--text-muted); }
+
+  .popup-body { padding: 18px 20px; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* popup content styles */
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h3 {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(46,74,98,0.3);
+    gap: 12px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .label { color: var(--text-muted); font-size: 12.5px; }
+  .detail-row .value { color: var(--text); font-size: 12.5px; font-weight: 500; text-align: right; font-family: 'DM Mono', monospace; }
+  .detail-row .value.highlight { color: var(--orange); }
+  .detail-row .value.good { color: var(--green); }
+  .detail-row .value.warn { color: var(--gold); }
+  .detail-row .value.bad { color: var(--red); }
+
+  .inclusion-list { list-style: none; }
+  .inclusion-list li {
+    padding: 6px 0;
+    font-size: 12.5px;
+    border-bottom: 1px solid rgba(46,74,98,0.3);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .inclusion-list li:last-child { border-bottom: none; }
+  .inclusion-list .status { flex-shrink: 0; margin-top: 1px; }
+
+  .note-box {
+    background: var(--mid);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+  .note-box.warn { background: rgba(244,185,66,0.08); border-left: 3px solid var(--gold); color: var(--gold); }
+  .note-box.risk { background: var(--red-soft); border-left: 3px solid var(--red); color: #e88; }
+  .note-box.good { background: var(--green-soft); border-left: 3px solid var(--green); color: var(--green); }
+
+  .score-bar-wrap { margin-bottom: 14px; }
+  .score-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: var(--text-muted);
+  }
+  .score-bar-label span:last-child { color: var(--text); font-weight: 600; font-family: 'DM Mono', monospace; }
+  .score-bar-track {
+    height: 6px;
+    background: var(--mid);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--orange);
+    transition: width 0.6s ease;
+  }
+  .score-bar-fill.green { background: var(--green); }
+  .score-bar-fill.gold { background: var(--gold); }
+  .score-bar-fill.red { background: var(--red); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    border-top: 1px solid var(--border);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  footer a { color: var(--orange); text-decoration: none; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">iTabs <span>QUOTE REPORT</span></div>
+    </div>
+    <div class="report-meta">
+      <strong>Riverside Commercial Fitout</strong>
+      Project Ref: RCF-2025-041 &nbsp;|&nbsp; 4 Contractors &nbsp;|&nbsp; March 2025
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- COVER LETTER -->
+  <div class="cover-letter">
+    <div class="letter-header">
+      <div class="letter-from">
+        <div class="letter-from-name">Max Holden</div>
+        <div class="letter-from-role">Independent Procurement Consultant</div>
+        <div class="letter-from-contact">max.holden@consultco.com.au &nbsp;·&nbsp; +61 4XX XXX XXX</div>
+      </div>
+      <div class="letter-date">4 March 2025</div>
+    </div>
+
+    <div class="letter-to">
+      <div>David Nguyen, CEO</div>
+      <div>Riverside Commercial Properties Pty Ltd</div>
+    </div>
+
+    <div class="letter-subject">Re: Tender Evaluation — Riverside Commercial Fitout (Ref: RCF-2025-041)</div>
+
+    <div class="letter-body">
+      <p>Dear David,</p>
+      <p>I have completed the evaluation of the four tenders received for the Riverside Commercial Fitout project. This report summarises my findings and provides a clear recommendation for your consideration.</p>
+      <p><strong>Recommended contractor: <span class="inline-itab" onclick="openLetterPopup('apex-rec')">Apex Integrated Services at $1,890,000 <span class="inline-i">i</span></span>.</strong> Apex submitted the most competitive fully-conforming tender, the shortest programme at <span class="inline-itab" onclick="openLetterPopup('programme')">16 weeks <span class="inline-i">i</span></span>, and a complete scope with no material exclusions. Of the four tenders received, two were conforming (Apex and Meridian Build Group) and one was non-conforming (Pacific Peak Builders).</p>
+      <p>While Pacific Peak submitted the lowest headline price at $1,870,000, their tender excluded HVAC, plumbing, fire services, and provisional sums. When these items are priced in at market rates, <span class="inline-itab" onclick="openLetterPopup('pacific-true')">Pacific Peak's true comparable cost exceeds $2.5M <span class="inline-i">i</span></span> — making them the most expensive option and unsuitable for award.</p>
+      <p><span class="inline-itab" onclick="openLetterPopup('meridian-rec')">Meridian Build Group is my second preference at $1,940,000 <span class="inline-i">i</span></span>, subject to resolution of their HVAC exclusion prior to contract execution. CoreTrade Solutions, while fully conforming, submitted a price $295,000 above the recommendation with a 20-week programme and cannot be recommended on value grounds.</p>
+      <p>The interactive report below provides full pricing breakdowns, scope inclusions, programme comparisons, and risk analysis for each contractor. I recommend issuing a Letter of Intent to Apex Integrated Services at your earliest convenience to secure their programme commitment.</p>
+      <p>Please don't hesitate to contact me to discuss.</p>
+      <p class="letter-sign">Regards,<br><strong>Max Holden</strong><br><span>Independent Procurement Consultant</span></p>
+    </div>
+
+    <div class="letter-divider">
+      <span>↓ &nbsp; Full interactive report below — click any contractor for complete breakdown &nbsp; ↓</span>
+    </div>
+    <div class="md-download-strip">
+      <div class="md-download-left">
+        <div class="md-download-title">📄 quote-comparison.md</div>
+        <div class="md-download-desc">Drop into any Claude project — paste your quotes and generate this report instantly</div>
+      </div>
+      <button class="md-download-btn" onclick="downloadMD()">⬇ Download SKILL.md</button>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section-label">EXECUTIVE SUMMARY</div>
+  <div class="exec-summary">
+    <h1>Tender Evaluation — Riverside Commercial Fitout</h1>
+    <p>Four qualified contractors submitted compliant tenders for the $2.1M commercial fitout including structural, electrical, plumbing, HVAC and fit-and-finish trades. All quotes were evaluated against price, programme, inclusions, and risk. One contractor submitted a non-conforming schedule.</p>
+    <div class="recommendation-badge">Recommended: Apex Integrated Services — $1,890,000</div>
+    <div style="margin-top:10px; font-size:12px; color:var(--text-dim);">
+      Second preference: Meridian Build Group — $1,940,000 &nbsp;|&nbsp; Click any <span style="color:var(--orange); font-weight:700;">ⓘ View Detail</span> button below for full analysis
+    </div>
+  </div>
+
+  <!-- QUOTE CARDS -->
+  <div class="section-label">CONTRACTOR QUOTES — CLICK ⓘ FOR FULL BREAKDOWN</div>
+  <div class="quote-grid">
+
+    <!-- CARD 1 — WINNER -->
+    <div class="quote-card winner">
+      <div class="winner-ribbon">RECOMMENDED</div>
+      <div class="contractor-name">Apex Integrated</div>
+      <div class="contractor-trade">Full multi-trade · Est. 2008 · 85 staff</div>
+      <div class="price-row">
+        <div class="price-amount low">$1,890,000</div>
+        <div class="price-vs saving">–$112k vs avg</div>
+      </div>
+      <div class="metrics">
+        <span class="metric good">16 weeks</span>
+        <span class="metric good">All incl.</span>
+        <span class="metric good">Low risk</span>
+      </div>
+      <button class="itab-btn" onclick="openPopup('apex')">
+        <span class="i-icon">i</span> View Full Detail
+      </button>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="quote-card">
+      <div class="contractor-name">Meridian Build Group</div>
+      <div class="contractor-trade">Multi-trade · Est. 2011 · 62 staff</div>
+      <div class="price-row">
+        <div class="price-amount">$1,940,000</div>
+        <div class="price-vs">+$50k vs Apex</div>
+      </div>
+      <div class="metrics">
+        <span class="metric good">17 weeks</span>
+        <span class="metric warn">2 excl.</span>
+        <span class="metric good">Low risk</span>
+      </div>
+      <button class="itab-btn" onclick="openPopup('meridian')">
+        <span class="i-icon">i</span> View Full Detail
+      </button>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="quote-card">
+      <div class="contractor-name">CoreTrade Solutions</div>
+      <div class="contractor-trade">Multi-trade · Est. 2015 · 44 staff</div>
+      <div class="price-row">
+        <div class="price-amount high">$2,185,000</div>
+        <div class="price-vs premium">+$295k vs Apex</div>
+      </div>
+      <div class="metrics">
+        <span class="metric warn">20 weeks</span>
+        <span class="metric good">All incl.</span>
+        <span class="metric warn">Med risk</span>
+      </div>
+      <button class="itab-btn" onclick="openPopup('coretrade')">
+        <span class="i-icon">i</span> View Full Detail
+      </button>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="quote-card">
+      <div class="contractor-name">Pacific Peak Builders</div>
+      <div class="contractor-trade">Multi-trade · Est. 2019 · 28 staff</div>
+      <div class="price-row">
+        <div class="price-amount">$1,870,000</div>
+        <div class="price-vs warn">⚠ Non-conforming</div>
+      </div>
+      <div class="metrics">
+        <span class="metric bad">Programme TBC</span>
+        <span class="metric bad">4 excl.</span>
+        <span class="metric bad">High risk</span>
+      </div>
+      <button class="itab-btn" onclick="openPopup('pacific')">
+        <span class="i-icon">i</span> View Full Detail
+      </button>
+    </div>
+
+  </div>
+
+  <!-- INCLUSIONS COMPARISON TABLE -->
+  <div class="compare-section">
+    <h2>KEY INCLUSIONS MATRIX</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Apex</th>
+          <th>Meridian</th>
+          <th>CoreTrade</th>
+          <th>Pacific</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Structural works</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+        <tr><td>Electrical (full)</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="partial">Partial</span></td></tr>
+        <tr><td>Plumbing & drainage</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td>HVAC supply & install</td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td>Fire services</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td>Site establishment</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="partial">Partial</span></td></tr>
+        <tr><td>Provisional sums</td><td><span class="tick">Priced</span></td><td><span class="partial">Some</span></td><td><span class="tick">Priced</span></td><td><span class="cross">Excluded</span></td></tr>
+        <tr><td>Programme submitted</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RISK FLAGS -->
+  <div class="section-label">RISK FLAGS</div>
+  <div class="risk-card">
+    <h3>⚠ Pacific Peak — Non-Conforming Tender</h3>
+    <p>Lowest headline price ($1,870,000) but excludes HVAC, fire services, plumbing, and provisional sums. True comparable cost estimated at $2.3M+. No programme submitted. Not recommended for consideration.</p>
+  </div>
+  <div class="risk-card" style="border-left-color: var(--gold); background: rgba(244,185,66,0.06); border-color: rgba(244,185,66,0.3);">
+    <h3 style="color:var(--gold);">⚠ Meridian — HVAC Excluded</h3>
+    <p>HVAC supply and install excluded from scope — estimated $65,000–$85,000 additional. If awarded, HVAC must be separately engaged and coordinated. Adds programme and interface risk.</p>
+  </div>
+
+</main>
+
+<footer>
+  Generated with <a href="https://itabs.ai" target="_blank">iTabs</a> · Interactive layered reporting for complex decisions · itabs.ai
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     POPUP OVERLAY
+═══════════════════════════════════════════════ -->
+<div class="popup-overlay" id="popup-overlay" onclick="closeOnOverlay(event)">
+  <div class="popup-panel" id="popup-panel">
+    <div class="popup-header">
+      <div>
+        <h2 id="popup-title">Contractor Detail</h2>
+        <p id="popup-subtitle">Full quote breakdown</p>
+      </div>
+      <button class="close-btn" onclick="closePopup()">×</button>
+    </div>
+    <div class="popup-tabs" id="popup-tabs"></div>
+    <div class="popup-body" id="popup-body"></div>
+  </div>
+</div>
+
+<script>
+const letterPopups = {
+  'apex-rec': {
+    title: 'Why Apex Is Recommended',
+    subtitle: 'Top 3 reasons for award',
+    body: `
+      <div class="detail-section">
+        <h3>Three Reasons for Recommendation</h3>
+        <div class="detail-row"><span class="label">1. Best comparable price</span><span class="value good">$1,890,000</span></div>
+        <div class="detail-row"><span class="label">2. Shortest programme</span><span class="value good">16 weeks</span></div>
+        <div class="detail-row"><span class="label">3. Complete scope</span><span class="value good">No exclusions</span></div>
+      </div>
+      <div class="detail-section">
+        <h3>Price vs All Tenderers</h3>
+        <div class="detail-row"><span class="label">Apex Integrated</span><span class="value good">$1,890,000 ✓</span></div>
+        <div class="detail-row"><span class="label">Meridian Build Group</span><span class="value">$1,940,000</span></div>
+        <div class="detail-row"><span class="label">CoreTrade Solutions</span><span class="value bad">$2,185,000</span></div>
+        <div class="detail-row"><span class="label">Pacific Peak (comparable)</span><span class="value bad">$2,550,000+</span></div>
+      </div>
+      <div class="note-box good">Apex is the lowest conforming tender with full scope and the fastest programme. No trade-offs required.</div>
+    `
+  },
+  'programme': {
+    title: 'Programme Comparison',
+    subtitle: 'All four contractors — weeks to completion',
+    body: `
+      <div class="detail-section">
+        <h3>Submitted Programmes</h3>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Apex Integrated</span><span>16 weeks ✓</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill green" style="width:64%"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Meridian Build Group</span><span>17 weeks (19–20 with HVAC)</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill gold" style="width:72%"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>CoreTrade Solutions</span><span>20 weeks</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill red" style="width:80%"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Pacific Peak</span><span>Not submitted</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill red" style="width:20%"></div></div>
+        </div>
+      </div>
+      <div class="note-box good">Apex's 16-week programme is the shortest of all conforming tenders — 4 weeks faster than CoreTrade and a critical path was provided.</div>
+    `
+  },
+  'pacific-true': {
+    title: 'Pacific Peak — True Cost',
+    subtitle: 'Why the lowest price is actually the highest',
+    body: `
+      <div class="detail-section">
+        <h3>Exclusions Priced Back In</h3>
+        <div class="detail-row"><span class="label">Submitted price</span><span class="value">$1,870,000</span></div>
+        <div class="detail-row"><span class="label">HVAC (excluded)</span><span class="value bad">+ $220,000</span></div>
+        <div class="detail-row"><span class="label">Plumbing & drainage (excluded)</span><span class="value bad">+ $195,000</span></div>
+        <div class="detail-row"><span class="label">Fire services (excluded)</span><span class="value bad">+ $115,000</span></div>
+        <div class="detail-row"><span class="label">Provisional sums (excluded)</span><span class="value bad">+ $150,000</span></div>
+        <div class="detail-row"><span class="label" style="font-weight:600;color:#111">True comparable cost</span><span class="value bad">$2,550,000+</span></div>
+      </div>
+      <div class="note-box risk">Pacific Peak's headline price is $20,000 below Apex — but the excluded items add $680,000. They are the most expensive option when compared on an equal basis.</div>
+    `
+  },
+  'meridian-rec': {
+    title: 'Meridian — Second Preference',
+    subtitle: 'Capable contractor, one issue to resolve',
+    body: `
+      <div class="detail-section">
+        <h3>Why Second, Not First</h3>
+        <div class="detail-row"><span class="label">Submitted price</span><span class="value">$1,940,000</span></div>
+        <div class="detail-row"><span class="label">HVAC excluded</span><span class="value bad">Est. +$65–85k</span></div>
+        <div class="detail-row"><span class="label">Comparable total</span><span class="value warn">~$2,005,000–$2,025,000</span></div>
+        <div class="detail-row"><span class="label">Programme</span><span class="value warn">17 wks (19–20 with HVAC)</span></div>
+      </div>
+      <div class="detail-section">
+        <h3>The HVAC Problem</h3>
+        <ul class="inclusion-list">
+          <li><span class="status cross" style="color:var(--red)">✗</span> HVAC not in Meridian's scope</li>
+          <li><span class="status cross" style="color:var(--red)">✗</span> Client must engage separate HVAC contractor</li>
+          <li><span class="status cross" style="color:var(--red)">✗</span> Interface between two head contractors creates risk</li>
+          <li><span class="status cross" style="color:var(--red)">✗</span> Programme extends by estimated 2–3 weeks</li>
+        </ul>
+      </div>
+      <div class="note-box warn">Meridian is a capable contractor. If Apex declines or is unavailable, negotiate HVAC inclusion before awarding to Meridian — don't accept the exclusion as-is.</div>
+    `
+  }
+};
+
+function downloadMD() {
+  const md = `# SKILL: iTabs Quote Comparison Report
+
+**Version:** 1.0
+**Author:** iTabs (itabs.ai)
+**Purpose:** Transform 4 contractor quotes into a professional iTabs comparison report — a consultant cover letter with interactive popups, plus a full tender evaluation matrix.
+
+---
+
+## What This Skill Does
+
+When you paste this file into a Claude project and upload contractor quote PDFs, Claude will:
+
+1. Read and reconcile all quotes into a common structure
+2. Identify inclusions, exclusions, and non-conforming items
+3. Score each contractor across price, programme, scope, capacity, and risk
+4. Generate a complete iTabs HTML report — a professional consultant letter with inline interactive popups, a quote card grid, an inclusions matrix, and risk flags
+5. Return a single self-contained HTML file ready to share via link
+
+---
+
+## How To Use
+
+### Step 1 — Paste this file into your Claude Project
+In Claude.ai, create or open a Project and add this file to the Project Instructions or upload it as a reference document.
+
+### Step 2 — Upload the quotes
+Upload the contractor quote PDFs (or paste quote text) and say:
+
+> "Run the quote comparison skill on these 4 quotes"
+
+### Step 3 — Provide project context
+Claude will ask for (or you can include upfront):
+- Project name and reference number
+- Client name and role (e.g. CEO name)
+- Consultant name (the person issuing the report)
+- Any known budget or preference criteria
+
+### Step 4 — Receive your iTabs report
+Claude returns a complete HTML file. Publish it to any web host or GitHub Pages for a shareable link.
+
+---
+
+## Output Structure
+
+### Layer 1 — Consultant Cover Letter
+A professional letter from consultant to CEO with inline iTabs on key claims.
+
+### Layer 2 — Quote Card Grid
+Four contractor cards with headline price, metrics, and ⓘ View Full Detail buttons.
+
+### Layer 3 — Contractor Detail Popups (5 tabs each)
+- **Pricing** — full line-item breakdown + payment terms
+- **Inclusions** — confirmed inclusions and exclusions
+- **Programme** — schedule milestones and comparison
+- **Scores** — bar chart evaluation across 5 criteria
+- **Notes** — analyst commentary and next steps
+
+### Layer 4 — Inclusions Matrix
+Side-by-side table of all major scope items across all contractors.
+
+### Layer 5 — Risk Flags
+Highlighted cards for non-conforming tenders and material exclusions.
+
+---
+
+## Prompt To Use
+
+\`\`\`
+I have uploaded [number] contractor quotes for [project name].
+Please run the iTabs Quote Comparison skill and generate a full report.
+
+Project details:
+- Project name: [name]
+- Project ref: [ref number]
+- Client: [CEO name], [Company name]
+- Consultant: [Your name]
+- Date: [date]
+- Budget (if applicable): [budget]
+
+Generate the complete iTabs HTML report with:
+- Consultant cover letter with inline iTabs on key claims
+- Quote card grid with ⓘ detail popups
+- Inclusions matrix, risk flags, and scores
+
+Return as a single self-contained HTML file.
+\`\`\`
+
+---
+
+## Evaluation Criteria
+
+| Criterion | Weight | What Claude Looks For |
+|---|---|---|
+| Price competitiveness | High | Comparable cost vs field average |
+| Scope completeness | High | All items included, no material exclusions |
+| Programme | Medium | Duration, critical path, mobilisation time |
+| Company capacity | Medium | Staff numbers, years in business, references |
+| Risk profile | Medium | Contract type, exclusions, non-conformances |
+
+---
+
+## About iTabs
+
+iTabs is a layered interactive content format. The same report, different depths for different readers.
+
+- CEO reads the letter and recommendation
+- Procurement manager drills into pricing
+- Project manager checks programme and scope gaps
+- Legal reviews contract terms and risk flags
+
+All from a single HTML file. No login. No subscription. No app.
+
+→ itabs.ai
+→ Built with Claude (Anthropic)
+
+*This SKILL.md file can be freely shared, copied into any Claude project, and adapted for your use case.*`;
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'quote-comparison.md';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function openLetterPopup(key) {
+  const p = letterPopups[key];
+  document.getElementById('popup-title').textContent = p.title;
+  document.getElementById('popup-subtitle').textContent = p.subtitle;
+  document.getElementById('popup-tabs').innerHTML = '';
+  document.getElementById('popup-body').innerHTML = p.body;
+  document.getElementById('popup-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+const contractors = {
+  apex: {
+    title: 'Apex Integrated Services',
+    subtitle: 'Recommended · Multi-trade · $1,890,000',
+    tabs: ['Pricing', 'Inclusions', 'Programme', 'Scores', 'Notes'],
+    content: {
+      Pricing: `
+        <div class="detail-section">
+          <h3>Price Breakdown</h3>
+          <div class="detail-row"><span class="label">Structural works</span><span class="value">$285,000</span></div>
+          <div class="detail-row"><span class="label">Electrical (full)</span><span class="value">$310,000</span></div>
+          <div class="detail-row"><span class="label">Plumbing & drainage</span><span class="value">$195,000</span></div>
+          <div class="detail-row"><span class="label">HVAC supply & install</span><span class="value">$220,000</span></div>
+          <div class="detail-row"><span class="label">Fire services</span><span class="value">$115,000</span></div>
+          <div class="detail-row"><span class="label">Fit & finish</span><span class="value">$380,000</span></div>
+          <div class="detail-row"><span class="label">Site establishment</span><span class="value">$85,000</span></div>
+          <div class="detail-row"><span class="label">Provisional sums</span><span class="value">$180,000</span></div>
+          <div class="detail-row"><span class="label">Margin & OH</span><span class="value">$120,000</span></div>
+          <div class="detail-row"><span class="label" style="font-weight:600; color:var(--text)">TOTAL</span><span class="value highlight">$1,890,000</span></div>
+        </div>
+        <div class="detail-section">
+          <h3>Payment Terms</h3>
+          <div class="detail-row"><span class="label">Contract type</span><span class="value">Lump sum fixed price</span></div>
+          <div class="detail-row"><span class="label">Progress claims</span><span class="value good">Monthly</span></div>
+          <div class="detail-row"><span class="label">Retention</span><span class="value">5% to 2.5% on PC</span></div>
+          <div class="detail-row"><span class="label">Variations</span><span class="value">Agreed schedule of rates</span></div>
+        </div>
+      `,
+      Inclusions: `
+        <div class="detail-section">
+          <h3>Confirmed Inclusions</h3>
+          <ul class="inclusion-list">
+            <li><span class="status tick">✓</span> Full structural works per engineering drawings</li>
+            <li><span class="status tick">✓</span> Complete electrical — power, data, lighting, switchboards</li>
+            <li><span class="status tick">✓</span> Plumbing, drainage and hot water systems</li>
+            <li><span class="status tick">✓</span> HVAC — supply, install and commissioning</li>
+            <li><span class="status tick">✓</span> Fire detection, suppression and egress lighting</li>
+            <li><span class="status tick">✓</span> All provisional sums priced and scheduled</li>
+            <li><span class="status tick">✓</span> Site establishment and traffic management</li>
+            <li><span class="status tick">✓</span> Building permit coordination</li>
+            <li><span class="status tick">✓</span> Defects liability 12 months</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h3>Exclusions</h3>
+          <ul class="inclusion-list">
+            <li><span class="status cross" style="color:var(--text-dim)">—</span> Authority utility connections (client responsibility)</li>
+            <li><span class="status cross" style="color:var(--text-dim)">—</span> Loose furniture and equipment</li>
+          </ul>
+        </div>
+        <div class="note-box good">All major trade items are included. The exclusions are standard and not material to scope.</div>
+      `,
+      Programme: `
+        <div class="detail-section">
+          <h3>Schedule</h3>
+          <div class="detail-row"><span class="label">Total duration</span><span class="value good">16 weeks</span></div>
+          <div class="detail-row"><span class="label">Mobilisation</span><span class="value">2 weeks from award</span></div>
+          <div class="detail-row"><span class="label">Structural complete</span><span class="value">Week 5</span></div>
+          <div class="detail-row"><span class="label">Services rough-in</span><span class="value">Weeks 5–10</span></div>
+          <div class="detail-row"><span class="label">Fit & finish</span><span class="value">Weeks 10–15</span></div>
+          <div class="detail-row"><span class="label">Commissioning</span><span class="value">Week 16</span></div>
+          <div class="detail-row"><span class="label">Practical completion</span><span class="value good">Week 16</span></div>
+        </div>
+        <div class="note-box good">16-week programme is the shortest of conforming tenders. Critical path identified and provided.</div>
+      `,
+      Scores: `
+        <div class="detail-section">
+          <h3>Evaluation Scores</h3>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Price competitiveness</span><span>9/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:90%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Scope completeness</span><span>10/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:100%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Programme</span><span>10/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:100%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Company capacity</span><span>9/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:90%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Risk profile</span><span>9/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:90%"></div></div>
+          </div>
+          <div style="margin-top:14px; padding:10px 12px; background:var(--green-soft); border-radius:4px; font-size:13px; color:var(--green); font-weight:600;">
+            Overall Score: 47/50 — Recommended Award
+          </div>
+        </div>
+      `,
+      Notes: `
+        <div class="detail-section">
+          <h3>Analyst Notes</h3>
+          <div class="note-box good">Second lowest price but fully conforming. When Pacific Peak's exclusions are priced in, Apex is effectively the lowest comparable tender.</div>
+          <div class="note-box" style="margin-top:10px;">Apex has completed 3 comparable commercial fitouts in the past 2 years. References available. 85 staff provides capacity confidence for a 16-week programme.</div>
+          <div class="note-box warn" style="margin-top:10px;">Minor: confirm builder's risk insurance level prior to contract execution. Standard coverage may need to be topped up for this project value.</div>
+        </div>
+        <div class="detail-section">
+          <h3>Recommended Next Steps</h3>
+          <ul class="inclusion-list">
+            <li><span class="status tick">→</span> Issue Letter of Intent to Apex</li>
+            <li><span class="status tick">→</span> Request insurance certificates</li>
+            <li><span class="status tick">→</span> Confirm mobilisation date</li>
+            <li><span class="status tick">→</span> Notify unsuccessful tenderers</li>
+          </ul>
+        </div>
+      `
+    }
+  },
+
+  meridian: {
+    title: 'Meridian Build Group',
+    subtitle: 'Second preference · Multi-trade · $1,940,000',
+    tabs: ['Pricing', 'Inclusions', 'Programme', 'Scores', 'Notes'],
+    content: {
+      Pricing: `
+        <div class="detail-section">
+          <h3>Price Breakdown</h3>
+          <div class="detail-row"><span class="label">Structural works</span><span class="value">$295,000</span></div>
+          <div class="detail-row"><span class="label">Electrical (full)</span><span class="value">$325,000</span></div>
+          <div class="detail-row"><span class="label">Plumbing & drainage</span><span class="value">$210,000</span></div>
+          <div class="detail-row"><span class="label">HVAC</span><span class="value warn">EXCLUDED</span></div>
+          <div class="detail-row"><span class="label">Fire services</span><span class="value">$120,000</span></div>
+          <div class="detail-row"><span class="label">Fit & finish</span><span class="value">$400,000</span></div>
+          <div class="detail-row"><span class="label">Site establishment</span><span class="value">$90,000</span></div>
+          <div class="detail-row"><span class="label">Provisional sums (partial)</span><span class="value">$120,000</span></div>
+          <div class="detail-row"><span class="label">Margin & OH</span><span class="value">$130,000</span></div>
+          <div class="detail-row"><span class="label" style="font-weight:600; color:var(--text)">SUBMITTED TOTAL</span><span class="value">$1,940,000</span></div>
+          <div class="detail-row"><span class="label">Est. HVAC addition</span><span class="value warn">+$65,000–$85,000</span></div>
+          <div class="detail-row"><span class="label" style="font-weight:600; color:var(--text)">COMPARABLE TOTAL</span><span class="value warn">~$2,005,000–$2,025,000</span></div>
+        </div>
+      `,
+      Inclusions: `
+        <div class="detail-section">
+          <h3>Inclusions / Exclusions</h3>
+          <ul class="inclusion-list">
+            <li><span class="status tick">✓</span> Full structural works</li>
+            <li><span class="status tick">✓</span> Electrical — power, data, lighting</li>
+            <li><span class="status tick">✓</span> Plumbing & drainage</li>
+            <li><span class="status cross" style="color:var(--red)">✗</span> HVAC — excluded, client to engage separately</li>
+            <li><span class="status tick">✓</span> Fire services</li>
+            <li><span class="status partial">~</span> Provisional sums — partial pricing only</li>
+            <li><span class="status tick">✓</span> Site establishment</li>
+            <li><span class="status tick">✓</span> 12-month defects liability</li>
+          </ul>
+        </div>
+        <div class="note-box warn">HVAC exclusion creates an interface risk. A separately engaged HVAC contractor working under a different head contractor can lead to coordination delays and disputed responsibilities.</div>
+      `,
+      Programme: `
+        <div class="detail-section">
+          <h3>Schedule</h3>
+          <div class="detail-row"><span class="label">Total duration</span><span class="value warn">17 weeks</span></div>
+          <div class="detail-row"><span class="label">Note</span><span class="value warn">HVAC not in programme</span></div>
+          <div class="detail-row"><span class="label">Effective programme with HVAC</span><span class="value bad">~19–20 weeks</span></div>
+        </div>
+        <div class="note-box warn">Programme does not account for HVAC interface. When a separate HVAC subcontractor is factored in, practical completion is likely to extend by 2–3 weeks.</div>
+      `,
+      Scores: `
+        <div class="detail-section">
+          <h3>Evaluation Scores</h3>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Price competitiveness</span><span>7/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill gold" style="width:70%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Scope completeness</span><span>7/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill gold" style="width:70%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Programme</span><span>7/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill gold" style="width:70%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Company capacity</span><span>8/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:80%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Risk profile</span><span>7/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill gold" style="width:70%"></div></div>
+          </div>
+          <div style="margin-top:14px; padding:10px 12px; background:var(--orange-soft); border-radius:4px; font-size:13px; color:var(--orange); font-weight:600;">
+            Overall Score: 36/50 — Second Preference
+          </div>
+        </div>
+      `,
+      Notes: `
+        <div class="detail-section">
+          <h3>Analyst Notes</h3>
+          <div class="note-box">Capable contractor with good references. The HVAC exclusion is the primary concern — not the price or the company itself. If Apex is not awarded, negotiate HVAC inclusion with Meridian before proceeding.</div>
+          <div class="note-box warn" style="margin-top:10px;">Do not award Meridian without resolving HVAC scope. Separate engagement creates programme and liability risk that outweighs the apparent saving.</div>
+        </div>
+      `
+    }
+  },
+
+  coretrade: {
+    title: 'CoreTrade Solutions',
+    subtitle: 'Over budget · Multi-trade · $2,185,000',
+    tabs: ['Pricing', 'Inclusions', 'Programme', 'Scores', 'Notes'],
+    content: {
+      Pricing: `
+        <div class="detail-section">
+          <h3>Price Breakdown</h3>
+          <div class="detail-row"><span class="label">Structural works</span><span class="value">$330,000</span></div>
+          <div class="detail-row"><span class="label">Electrical (full)</span><span class="value">$370,000</span></div>
+          <div class="detail-row"><span class="label">Plumbing & drainage</span><span class="value">$240,000</span></div>
+          <div class="detail-row"><span class="label">HVAC supply & install</span><span class="value">$265,000</span></div>
+          <div class="detail-row"><span class="label">Fire services</span><span class="value">$140,000</span></div>
+          <div class="detail-row"><span class="label">Fit & finish</span><span class="value">$430,000</span></div>
+          <div class="detail-row"><span class="label">Site establishment</span><span class="value">$105,000</span></div>
+          <div class="detail-row"><span class="label">Provisional sums</span><span class="value">$155,000</span></div>
+          <div class="detail-row"><span class="label">Margin & OH</span><span class="value bad">$150,000</span></div>
+          <div class="detail-row"><span class="label" style="font-weight:600; color:var(--text)">TOTAL</span><span class="value bad">$2,185,000</span></div>
+        </div>
+        <div class="note-box risk">$295,000 above recommended tender. Margin line ($150k) is notably higher than competitors. No value justification provided.</div>
+      `,
+      Inclusions: `
+        <div class="detail-section">
+          <h3>Inclusions</h3>
+          <ul class="inclusion-list">
+            <li><span class="status tick">✓</span> All major trades included</li>
+            <li><span class="status tick">✓</span> Full provisional sums priced</li>
+            <li><span class="status tick">✓</span> Site establishment</li>
+            <li><span class="status tick">✓</span> 12-month defects liability</li>
+          </ul>
+        </div>
+        <div class="note-box">Scope is fully conforming. The issue is price, not scope. CoreTrade's inclusions match Apex but at a significant premium with no justification offered.</div>
+      `,
+      Programme: `
+        <div class="detail-section">
+          <h3>Schedule</h3>
+          <div class="detail-row"><span class="label">Total duration</span><span class="value bad">20 weeks</span></div>
+          <div class="detail-row"><span class="label">vs Recommended</span><span class="value bad">+4 weeks longer</span></div>
+        </div>
+        <div class="note-box risk">20-week programme is the longest submitted. Combined with the premium price, CoreTrade does not represent value in this tender.</div>
+      `,
+      Scores: `
+        <div class="detail-section">
+          <h3>Evaluation Scores</h3>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Price competitiveness</span><span>3/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill red" style="width:30%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Scope completeness</span><span>10/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" style="width:100%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Programme</span><span>4/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill red" style="width:40%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Company capacity</span><span>7/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill gold" style="width:70%"></div></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label"><span>Risk profile</span><span>6/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill gold" style="width:60%"></div></div>
+          </div>
+          <div style="margin-top:14px; padding:10px 12px; background:var(--red-soft); border-radius:4px; font-size:13px; color:var(--red); font-weight:600;">
+            Overall Score: 30/50 — Not Recommended
+          </div>
+        </div>
+      `,
+      Notes: `
+        <div class="detail-section">
+          <h3>Analyst Notes</h3>
+          <div class="note-box risk">At $295,000 above the recommended tender with a 4-week longer programme, CoreTrade cannot be recommended on value grounds. Suggest not carrying to shortlist.</div>
+        </div>
+      `
+    }
+  },
+
+  pacific: {
+    title: 'Pacific Peak Builders',
+    subtitle: 'Non-conforming — Not recommended · $1,870,000 submitted',
+    tabs: ['Pricing', 'Inclusions', 'Risk', 'Notes'],
+    content: {
+      Pricing: `
+        <div class="detail-section">
+          <h3>Submitted vs Comparable Price</h3>
+          <div class="detail-row"><span class="label">Submitted price</span><span class="value">$1,870,000</span></div>
+          <div class="detail-row"><span class="label">HVAC (excluded)</span><span class="value bad">est. +$220,000</span></div>
+          <div class="detail-row"><span class="label">Fire services (excluded)</span><span class="value bad">est. +$115,000</span></div>
+          <div class="detail-row"><span class="label">Plumbing (excluded)</span><span class="value bad">est. +$195,000</span></div>
+          <div class="detail-row"><span class="label">Provisional sums (excluded)</span><span class="value bad">est. +$150,000</span></div>
+          <div class="detail-row"><span class="label" style="font-weight:600; color:var(--text)">COMPARABLE TOTAL</span><span class="value bad">est. $2,550,000+</span></div>
+        </div>
+        <div class="note-box risk">Despite appearing $20,000 cheaper than Apex, Pacific Peak's exclusions add an estimated $680,000 to the true comparable cost. Headline price is misleading.</div>
+      `,
+      Inclusions: `
+        <div class="detail-section">
+          <h3>What Was and Wasn't Included</h3>
+          <ul class="inclusion-list">
+            <li><span class="status tick">✓</span> Structural works</li>
+            <li><span class="status partial">~</span> Electrical — partial (power only, no data/communications)</li>
+            <li><span class="status cross" style="color:var(--red)">✗</span> Plumbing & drainage — excluded</li>
+            <li><span class="status cross" style="color:var(--red)">✗</span> HVAC — excluded</li>
+            <li><span class="status cross" style="color:var(--red)">✗</span> Fire services — excluded</li>
+            <li><span class="status partial">~</span> Site establishment — partial</li>
+            <li><span class="status cross" style="color:var(--red)">✗</span> Provisional sums — excluded entirely</li>
+            <li><span class="status cross" style="color:var(--red)">✗</span> Programme — not submitted</li>
+          </ul>
+        </div>
+      `,
+      Risk: `
+        <div class="detail-section">
+          <h3>Risk Assessment</h3>
+          <div class="detail-row"><span class="label">Non-conforming tender</span><span class="value bad">Yes</span></div>
+          <div class="detail-row"><span class="label">Programme submitted</span><span class="value bad">No</span></div>
+          <div class="detail-row"><span class="label">Excluded trades requiring engagement</span><span class="value bad">3 major trades</span></div>
+          <div class="detail-row"><span class="label">Company age</span><span class="value warn">Est. 2019 (6 years)</span></div>
+          <div class="detail-row"><span class="label">Staff capacity</span><span class="value warn">28 staff</span></div>
+          <div class="detail-row"><span class="label">Comparable cost position</span><span class="value bad">Most expensive</span></div>
+        </div>
+        <div class="note-box risk">Awarding to Pacific Peak would require the client to directly engage and coordinate three separate trade contractors, assume interface risk, and manage a programme that has not been defined. Not recommended under any circumstances for this project.</div>
+      `,
+      Notes: `
+        <div class="detail-section">
+          <h3>Recommendation</h3>
+          <div class="note-box risk">Disqualify from further consideration. Tender is non-conforming on 4 grounds: missing scope items, no provisional sums, no programme, and partial electrical scope.</div>
+          <div class="note-box" style="margin-top:10px;">Pacific Peak may be suitable for smaller, simpler scopes where their lean structure is an advantage. This project exceeds their demonstrated capacity.</div>
+        </div>
+      `
+    }
+  }
+};
+
+let activeTab = {};
+
+function openPopup(key) {
+  const c = contractors[key];
+  document.getElementById('popup-title').textContent = c.title;
+  document.getElementById('popup-subtitle').textContent = c.subtitle;
+
+  const tabsEl = document.getElementById('popup-tabs');
+  tabsEl.innerHTML = '';
+  c.tabs.forEach((tab, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'popup-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = tab;
+    btn.onclick = () => switchTab(key, tab);
+    tabsEl.appendChild(btn);
+  });
+
+  activeTab[key] = c.tabs[0];
+  document.getElementById('popup-body').innerHTML = c.content[c.tabs[0]];
+  document.getElementById('popup-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function switchTab(key, tab) {
+  const c = contractors[key];
+  activeTab[key] = tab;
+  document.getElementById('popup-body').innerHTML = c.content[tab];
+
+  document.querySelectorAll('.popup-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === tab);
+  });
+}
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('popup-overlay')) closePopup();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+</script>
+</body>
+</html>
